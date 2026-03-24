@@ -17,8 +17,7 @@ received_all_event = threading.Event()
 endpoint_AWS="a2xyhr7rc9cefs-ats.iot.us-east-1.amazonaws.com"
 cert_filepath_AWS="cert/Control.cert.pem"
 pri_key_filepath_AWS="cert/Control.private.key"
-clientId_AWS="basicPubSub"
-device_name_AWS="Control"
+clientId_AWS="Control"
 message_topic_commands_AWS="command"
 client = None
 iot_connected = False
@@ -105,7 +104,22 @@ def index():
     houses = list(set(item["house"]["S"] for item in items))
 
     # Casa seleccionada (por defecto la primera)
-    selected_house = request.args.get("house", houses[0])
+    if houses:
+        selected_house = request.args.get("house", houses[0])
+    else:
+        selected_house = None
+
+    ## Si no hay casas no tengo datos
+    if not houses:
+        return render_template(
+            "index.html",
+            timestamps=[],
+            temperature=[],
+            humidity=[],
+            distance=[],
+            houses=[],
+            selected_house=None
+        )
 
     timestamps = []
     temperature = []

@@ -79,7 +79,7 @@
 
     <!-- TOP BAR -->
     <div class="top-bar">
-        <div class="title">🏠 Telemetría {{ selected_house }}</div>
+        <div class="title">🏠 Telemetría {% if selected_house %}{{ selected_house }}{% else %}Sin datos{% endif %}</div>
 
         <form action="/refresh" method="get" onsubmit="this.querySelector('button').disabled=true; this.querySelector('button').innerText='Actualizando...'">
             <input type="hidden" name="house" value="{{ selected_house }}">
@@ -91,16 +91,20 @@
 
     <!-- SELECTOR CASA -->
     <div class="card">
-        <form method="get">
-            <label><strong>Selecciona casa:</strong></label>
-            <select name="house" onchange="this.form.submit()">
-                {% for house in houses %}
-                <option value="{{ house }}" {% if house==selected_house %}selected{% endif %}>
-                    {{ house }}
-                </option>
-                {% endfor %}
-            </select>
-        </form>
+        {% if houses %}
+            <form method="get">
+                <label>Selecciona casa:</label>
+                <select name="house" onchange="this.form.submit()">
+                    {% for house in houses %}
+                    <option value="{{ house }}" {% if house == selected_house %}selected{% endif %}>
+                        {{ house }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
+        {% else %}
+            <p>No hay datos disponibles</p>
+        {% endif %}
     </div>
 
     <!-- GRÁFICA -->
@@ -119,7 +123,7 @@
             <textarea name="message" rows="6">
 {
     "device": "LCD",
-    "messsage": "Hola mundo!!!"
+    "message": "Hola mundo!!!"
 }
             </textarea>
 
