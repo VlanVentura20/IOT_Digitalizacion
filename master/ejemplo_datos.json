@@ -1,0 +1,76 @@
+{
+    "Items": [
+        {
+            "payload": {
+                "M": {
+                    "distance": {
+                        "S": "73 cm"
+                    },
+                    "noise_status": {
+                        "S": "No Noise!"
+                    },
+                    "motion_status": {
+                        "S": "No Intruder!"
+                    },
+                    "temperature": {
+                        "S": "22.0C"
+                    },
+                    "fire_safety": {
+                        "S": "Safe (No Fire)"
+                    },
+                    "humidity": {
+                        "S": "32.0%"
+                    },
+                    "house": {
+                        "S": "Casa1"
+                    },
+                    "timestamp": {
+                        "N": "1774955646"
+                    }
+                }
+            },
+            "house": {
+                "S": "Casa1"
+            },
+            "timestamp": {
+                "N": "1774955646"
+            }
+        },
+        {
+            "payload": {
+                "M": {
+                    "distance": {
+                        "S": "38 cm"
+                    },
+                    "noise_status": {
+                        "S": "No Noise!"
+                    },
+                    "motion_status": {
+                        "S": "Intruder Detected!"
+                    },
+                    "temperature": {
+                        "S": "22.0C"
+                    },
+                    "fire_safety": {
+                        "S": "Safe (No Fire)"
+                    },
+                    "humidity": {
+                        "S": "33.0%"
+                    },
+                    "house": {
+                        "S": "Casa2"
+                    },
+                    "timestamp": {
+                        "N": "1774955656"
+                    }
+                }
+            },
+            "house": {
+                "S": "Casa1"
+            },
+            "timestamp": {
+                "N": "1774955656"
+            }
+        }
+    ]
+}

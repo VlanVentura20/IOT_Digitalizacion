@@ -129,28 +129,46 @@ def index():
     today = datetime.now().date()
 
     for item in items:
-
         if item["house"]["S"] != selected_house:
             continue
 
-        payload = item["payload"]["M"]
+        payload = item.get("payload", {}).get("M", {})
 
-        ts = int(payload["timestamp"]["N"])
+        # Timestamp
+        ts_str = payload.get("timestamp", {}).get("N")
+        if not ts_str:
+            continue  # saltar si no hay timestamp
+        ts = int(ts_str)
         dt = datetime.fromtimestamp(ts)
 
         # Filtrar solo datos de hoy
         if dt.date() != today:
             continue
 
-        timestamps.append(datetime.fromtimestamp(ts).strftime("%d/%m %H:%M:%S"))
+        timestamps.append(dt.strftime("%d/%m %H:%M:%S"))
 
-        temp = float(payload["temperature"]["S"].replace("C",""))
+        # Temperatura
+        temp_raw = payload.get("temperature", {}).get("S")
+        if temp_raw:
+            temp = float(temp_raw.replace("C", ""))
+        else:
+            temp = None
         temperature.append(temp)
 
-        hum = float(payload["humidity"]["S"].replace("%",""))
+        # Humedad
+        hum_raw = payload.get("humidity", {}).get("S")
+        if hum_raw:
+            hum = float(hum_raw.replace("%", ""))
+        else:
+            hum = None
         humidity.append(hum)
 
-        dist = float(payload["distance"]["S"].replace(" cm",""))
+        # Distancia
+        dist_raw = payload.get("distance", {}).get("S")
+        if dist_raw:
+            dist = float(dist_raw.replace(" cm", ""))
+        else:
+            dist = None
         distance.append(dist)
 
     return render_template(
