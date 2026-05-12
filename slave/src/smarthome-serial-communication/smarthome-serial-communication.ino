@@ -47,6 +47,10 @@
 #define greenPin_RGB 23
 #define bluePin_RGB 22
 
+int rgb_r = 0;
+int rgb_g = 0;
+int rgb_b = 0;
+
 // LCD Display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
@@ -143,25 +147,30 @@ void executeCommand(String cmd) {
       digitalWrite(LED_BUILTIN, LOW);
       Serial.println("Result: LED is OFF");
     }
-  } else if (cmd.startsWith("rgb")) {
-    if (cmd.indexOf("red") > 0) {
-      color(255, 0, 0);
-      rgb_color = "red";
-      Serial.println("Result: RGB set to RED");
-    } else if (cmd.indexOf("green") > 0) {
-      color(0, 255, 0);
-      rgb_color = "green";
-      Serial.println("Result: RGB set to GREEN");
-    } else if (cmd.indexOf("blue") > 0) {
-      color(0, 0, 255);
-      rgb_color = "blue";
-      Serial.println("Result: RGB set to BLUE");
-    } else if (cmd.indexOf("off") > 0) {        // <-- añadir este bloque
-      color(0, 0, 0);
-      rgb_color = "off";
-      Serial.println("Result: RGB OFF");
+  } else if (cmd.startsWith("rgb:")) {
+    int r, g, b;
+    if (sscanf(cmd.c_str(), "rgb: %d, %d, %d", &r, &g, &b) == 3) {
+
+      r = constrain(r, 0, 255);
+      rgb_r = r;
+      g = constrain(g, 0, 255);
+      rgb_g = g;
+      b = constrain(b, 0, 255);
+      rgb_b = b;
+
+      color(r, g, b);
+
+      Serial.print("Result: RGB set to ");
+      Serial.print(r);
+      Serial.print(", ");
+      Serial.print(g);
+      Serial.print(", ");
+      Serial.println(b);
+
+    } else {
+      Serial.println("Error: Use format -> rgb: 255, 20, 100");
     }
-  } else if (cmd.startsWith("buzzer")) {
+} else if (cmd.startsWith("buzzer")) {
     if (cmd.indexOf("on") > 0) {
       digitalWrite(buzzer, HIGH);
       Serial.println("Result: Buzzer is ON");
@@ -296,8 +305,10 @@ void readAllSensors() {
   Serial.println(digitalRead(yellowLED) ? "ON" : "OFF");
   Serial.print("Result: white LED: ");
   Serial.println(digitalRead(whiteLED) ? "ON" : "OFF");
-  Serial.print("Result: RGB: ");
+  Serial.print("Result: RGB status: ");
   Serial.println(rgb_color);
+  Serial.print("Result: RGB color: ");
+  Serial.println(String(rgb_r) + ", " + String(rgb_g) + ", " + String(rgb_b));
 }
 
 void handleKeypad() {
