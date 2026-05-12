@@ -118,7 +118,8 @@ def index():
             humidity=[],
             distance=[],
             houses=[],
-            selected_house=None
+            selected_house=None,
+            lights_status={}
         )
 
     timestamps = []
@@ -171,6 +172,25 @@ def index():
             dist = None
         distance.append(dist)
 
+        # Estado de luces: tomar el ítem más reciente de la casa seleccionada
+    
+    house_items = [i for i in items if i["house"]["S"] == selected_house]
+    latest_item = max(
+        house_items,
+        key=lambda i: int(i.get("payload", {}).get("M", {}).get("timestamp", {}).get("N", "0")),
+        default=None
+    )
+    lights_status = {}
+    if latest_item:
+        m = latest_item.get("payload", {}).get("M", {})
+        lights_status = {
+            "red_led":    m.get("red_led",    {}).get("S", "?"),
+            "green_led":  m.get("green_led",  {}).get("S", "?"),
+            "yellow_led": m.get("yellow_led", {}).get("S", "?"),
+            "white_led":  m.get("white_led",  {}).get("S", "?"),
+            "rgb":        m.get("rgb",        {}).get("S", "?"),
+        }
+
     return render_template(
         "index.html",
         timestamps=timestamps,
@@ -178,7 +198,8 @@ def index():
         humidity=humidity,
         distance=distance,
         houses=houses,
-        selected_house=selected_house
+        selected_house=selected_house,
+        lights_status=lights_status
     )
 
 @app.route("/send", methods=["POST"])
@@ -247,6 +268,50 @@ def refresh():
     print(command)
 
     subprocess.run(command, shell=True)
+
+    return redirect(url_for("index", house=house))
+
+@app.route("/light", methods=["POST"])
+def light():
+    device = request.form.get("device")  # "red","green","yellow","white","rgb"
+    status = request.form.get("status")  # "on"/"off" (LEDs individuales)
+    color  = request.form.get("color")   # "red","green","blue","off" (solo RGB)
+    house  = request.form.get("house")
+
+    message = color if device == "rgb" else status
+
+    payload = json.dumps({"house": house, "device": device, "message": message})
+
+    if iot_connected:
+        publish_future = client.publish(
+            mqtt5.PublishPacket(
+                topic=message_topic_commands_AWS,
+                payload=payload,
+                qos=mqtt5.QoS.AT_LEAST_ONCE
+            )
+        )
+        publish_future.result(TIMEOUT_CONNECT_AWS)
+        print(f"Comando enviado: {payload}")
+
+    return redirect(url_for("index", house=house))
+
+@app.route("/lights", methods=["POST"])
+def lights():
+    status = request.form.get("status")  # "on" / "off"
+    house  = request.form.get("house")
+
+    payload = json.dumps({"house": house, "device": "lights", "message": status})
+
+    if iot_connected:
+        publish_future = client.publish(
+            mqtt5.PublishPacket(
+                topic=message_topic_commands_AWS,
+                payload=payload,
+                qos=mqtt5.QoS.AT_LEAST_ONCE
+            )
+        )
+        publish_future.result(TIMEOUT_CONNECT_AWS)
+        print(f"Comando colectivo enviado: {payload}")
 
     return redirect(url_for("index", house=house))
 

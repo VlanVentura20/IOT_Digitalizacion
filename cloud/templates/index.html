@@ -113,6 +113,61 @@
         <canvas id="chart"></canvas>
     </div>
 
+    <div class="card">
+        <h3>💡 Control de Luces</h3>
+
+        <!-- Todas las luces -->
+        <form method="post" action="/lights" style="margin-bottom:15px">
+            <input type="hidden" name="house" value="{{ selected_house }}">
+            <button name="status" value="on"  style="background:#ffc107;color:#000">Todas ON</button>
+            <button name="status" value="off" style="background:#6c757d">Todas OFF</button>
+        </form>
+
+        <table style="width:100%;border-collapse:collapse">
+            <tr>
+                <th style="text-align:left">Luz</th>
+                <th>Estado actual</th>
+                <th>Encender</th>
+                <th>Apagar</th>
+            </tr>
+            {% for light, label in [("red","LED Rojo"),("green","LED Verde"),("yellow","LED Amarillo"),("white","Luz Exterior")] %}
+            <tr>
+                <td>{{ label }}</td>
+                <td style="text-align:center">{{ lights_status.get(light+"_led", "?") }}</td>
+                <td style="text-align:center">
+                    <form method="post" action="/light">
+                        <input type="hidden" name="house" value="{{ selected_house }}">
+                        <input type="hidden" name="device" value="{{ light }}">
+                        <button name="status" value="on" style="background:#28a745">ON</button>
+                    </form>
+                </td>
+                <td style="text-align:center">
+                    <form method="post" action="/light">
+                        <input type="hidden" name="house" value="{{ selected_house }}">
+                        <input type="hidden" name="device" value="{{ light }}">
+                        <button name="status" value="off" style="background:#dc3545">OFF</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <!-- RGB -->
+            <tr>
+                <td>RGB</td>
+                <td style="text-align:center">{{ lights_status.get("rgb", "?") }}</td>
+                <td colspan="2" style="text-align:center">
+                    <form method="post" action="/light">
+                        <input type="hidden" name="house" value="{{ selected_house }}">
+                        <input type="hidden" name="device" value="rgb">
+                        <button name="color" value="red"   style="background:red">Rojo</button>
+                        <button name="color" value="green" style="background:green">Verde</button>
+                        <button name="color" value="blue"  style="background:blue">Azul</button>
+                        <button name="color" value="off"   style="background:#6c757d">OFF</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+
     <!-- ENVÍO JSON -->
     <div class="card">
         <h3>📨 Enviar mensaje a la casa</h3>

@@ -90,17 +90,24 @@ def on_publish_received_AWS(publish_packet_data):
     print("==== Received message from topic '{}': {} ====\n".format(
         publish_packet.topic, publish_packet.payload.decode('utf-8')))
 
-    # What to do with message
-    # Format the command for LCD messages
     command = json.loads(publish_packet.payload.decode('utf-8'))
-    if command['house'] == "Casa1":
-        print("Message for Casa1\n")
-        if command['device'] == "LCD":
-            print("Message for LCD\n")
-            message = command['message']
+    if command['house'] == device_name_AWS:
+        device = command.get('device', '')
+        message = command.get('message', '')
+
+        if device == "LCD":
             commandToHouse = f'lcd "{message}"'
-            response = send_command(commandToHouse)
-            print(f"Response from HOUSE {response}")
+        elif device in ["red", "green", "yellow", "white"]:
+            commandToHouse = f'{device} {message}'   # ej: "red on", "white off"
+        elif device == "rgb":
+            commandToHouse = f'rgb {message}'        # ej: "rgb red", "rgb off"
+        elif device == "lights":
+            commandToHouse = f'lights {message}'     # ej: "lights on"
+        else:
+            return
+
+        response = send_command(commandToHouse)
+        print(f"Response from HOUSE {response}")
 
 
 # Callback for the lifecycle event Stopped
