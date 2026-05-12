@@ -191,7 +191,8 @@ void executeCommand(String cmd) {
         lcd.backlight();
         lcd.print(msg);
         Serial.println("Result: LCD message sent");
-      } else if (cmd.startsWith("red")) {
+      }
+  } else if (cmd.startsWith("red")) {
     if (cmd.indexOf("on") > 0) {
       digitalWrite(redLED, HIGH);
       Serial.println("Result: LED Rojo ON");
@@ -199,7 +200,7 @@ void executeCommand(String cmd) {
       digitalWrite(redLED, LOW);
       Serial.println("Result: LED Rojo OFF");
     }
-} else if (cmd.startsWith("green")) {
+  } else if (cmd.startsWith("green")) {
     if (cmd.indexOf("on") > 0) {
       digitalWrite(greenLED, HIGH);
       Serial.println("Result: LED Verde ON");
@@ -207,7 +208,7 @@ void executeCommand(String cmd) {
       digitalWrite(greenLED, LOW);
       Serial.println("Result: LED Verde OFF");
     }
-} else if (cmd.startsWith("yellow")) {
+  } else if (cmd.startsWith("yellow")) {
     if (cmd.indexOf("on") > 0) {
       digitalWrite(yellowLED, HIGH);
       Serial.println("Result: LED Amarillo ON");
@@ -215,7 +216,7 @@ void executeCommand(String cmd) {
       digitalWrite(yellowLED, LOW);
       Serial.println("Result: LED Amarillo OFF");
     }
-} else if (cmd.startsWith("white")) {
+  } else if (cmd.startsWith("white")) {
     if (cmd.indexOf("on") > 0) {
       digitalWrite(whiteLED, HIGH);
       Serial.println("Result: Luz Exterior ON");
@@ -223,7 +224,7 @@ void executeCommand(String cmd) {
       digitalWrite(whiteLED, LOW);
       Serial.println("Result: Luz Exterior OFF");
     }
-} else if (cmd.startsWith("lights")) {
+  } else if (cmd.startsWith("lights")) {
     if (cmd.indexOf("on") > 0) {
       digitalWrite(redLED, HIGH);
       digitalWrite(greenLED, HIGH);
