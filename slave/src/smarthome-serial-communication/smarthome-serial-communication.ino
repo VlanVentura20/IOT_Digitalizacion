@@ -43,9 +43,9 @@
 #define RFID_SDA 48
 #define RFID_RST 49
 #define DHT11_PIN 2
-#define redPin_RGB 24
-#define greenPin_RGB 23
-#define bluePin_RGB 22
+#define redPin_RGB 6
+#define greenPin_RGB 7
+#define bluePin_RGB 8
 
 int rgb_r = 0;
 int rgb_g = 0;
@@ -147,28 +147,37 @@ void executeCommand(String cmd) {
       digitalWrite(LED_BUILTIN, LOW);
       Serial.println("Result: LED is OFF");
     }
-  } else if (cmd.startsWith("rgb:")) {
+  } else if (cmd.startsWith("rgb")) {
     int r, g, b;
-    if (sscanf(cmd.c_str(), "rgb: %d, %d, %d", &r, &g, &b) == 3) {
-
-      r = constrain(r, 0, 255);
-      rgb_r = r;
-      g = constrain(g, 0, 255);
-      rgb_g = g;
-      b = constrain(b, 0, 255);
-      rgb_b = b;
-
+    if (cmd.indexOf("red") > 0) {
+      color(255, 0, 0); rgb_r = 255; rgb_g = 0; rgb_b = 0;
+      rgb_color = "red";
+      Serial.println("Result: RGB set to RED");
+    } else if (cmd.indexOf("green") > 0) {
+      color(0, 255, 0); rgb_r = 0; rgb_g = 255; rgb_b = 0;
+      rgb_color = "green";
+      Serial.println("Result: RGB set to GREEN");
+    } else if (cmd.indexOf("blue") > 0) {
+      color(0, 0, 255); rgb_r = 0; rgb_g = 0; rgb_b = 255;
+      rgb_color = "blue";
+      Serial.println("Result: RGB set to BLUE");
+    } else if (cmd.indexOf("off") > 0) {
+      color(0, 0, 0); rgb_r = 0; rgb_g = 0; rgb_b = 0;
+      rgb_color = "off";
+      Serial.println("Result: RGB OFF");
+    } else if (sscanf(cmd.c_str(), "rgb: %d, %d, %d", &r, &g, &b) == 3 ||
+               sscanf(cmd.c_str(), "rgb %d, %d, %d", &r, &g, &b) == 3) {
+      r = constrain(r, 0, 255); rgb_r = r;
+      g = constrain(g, 0, 255); rgb_g = g;
+      b = constrain(b, 0, 255); rgb_b = b;
       color(r, g, b);
-
+      rgb_color = "custom";
       Serial.print("Result: RGB set to ");
-      Serial.print(r);
-      Serial.print(", ");
-      Serial.print(g);
-      Serial.print(", ");
+      Serial.print(r); Serial.print(", ");
+      Serial.print(g); Serial.print(", ");
       Serial.println(b);
-
     } else {
-      Serial.println("Error: Use format -> rgb: 255, 20, 100");
+      Serial.println("Error: Use 'rgb red/green/blue/off' or 'rgb: 255, 20, 100'");
     }
 } else if (cmd.startsWith("buzzer")) {
     if (cmd.indexOf("on") > 0) {
