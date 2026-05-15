@@ -158,6 +158,12 @@ void executeCommand(String cmd) {
       b = constrain(b, 0, 255);
       rgb_b = b;
 
+      if (r == 0 and g == 0 and b == 0) {
+        rgb_color = "OFF";
+      } else {
+        rgb_color = "ON";
+      }
+
       color(r, g, b);
 
       Serial.print("Result: RGB set to ");
